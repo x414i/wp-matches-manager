@@ -61,29 +61,7 @@ final class ILB_Admin_UI {
             [ $this, 'render_builder_page' ]
         );
 
-        add_submenu_page(
-            'ilb_main_menu',
-            __( 'اللاعبون', 'ittihad-lineup' ),
-            __( 'اللاعبون', 'ittihad-lineup' ),
-            'edit_posts',
-            'edit.php?post_type=ilb_player'
-        );
-
-        add_submenu_page(
-            'ilb_main_menu',
-            __( 'الفرق', 'ittihad-lineup' ),
-            __( 'الفرق', 'ittihad-lineup' ),
-            'edit_posts',
-            'edit.php?post_type=ilb_team'
-        );
-
-        add_submenu_page(
-            'ilb_main_menu',
-            __( 'التشكيلات', 'ittihad-lineup' ),
-            __( 'التشكيلات', 'ittihad-lineup' ),
-            'edit_posts',
-            'edit.php?post_type=ilb_lineup'
-        );
+        // Custom post types submenus are implicitly added by their register_post_type definitions.
     }
 
     // ─── Assets ───────────────────────────────────────────────────────────────
@@ -177,7 +155,10 @@ final class ILB_Admin_UI {
 
         $position      = get_post_meta( $post->ID, '_ilb_position',      true );
         $jersey_number = get_post_meta( $post->ID, '_ilb_jersey_number', true );
-        $team_id       = get_post_meta( $post->ID, '_ilb_player_team',   true );
+        $team_ids      = get_post_meta( $post->ID, '_ilb_player_team',   true );
+        if ( ! is_array( $team_ids ) ) {
+            $team_ids = $team_ids ? (array) $team_ids : [];
+        }
 
         $teams = get_posts( [ 'post_type' => 'ilb_team', 'posts_per_page' => -1, 'post_status' => 'publish' ] );
         ?>
@@ -195,15 +176,15 @@ final class ILB_Admin_UI {
             </div>
             <div class="ilb-field ilb-field--full">
                 <label for="ilb_player_team"><?php esc_html_e( 'الفريق', 'ittihad-lineup' ); ?></label>
-                <select id="ilb_player_team" name="ilb_player_team">
-                    <option value=""><?php esc_html_e( 'اختر الفريق', 'ittihad-lineup' ); ?></option>
+                <select id="ilb_player_team" name="ilb_player_team[]" multiple="multiple" style="height:100px;">
                     <?php foreach ( $teams as $team ) : ?>
                         <option value="<?php echo esc_attr( $team->ID ); ?>"
-                            <?php selected( $team_id, $team->ID ); ?>>
+                            <?php selected( in_array( $team->ID, $team_ids ) ); ?>>
                             <?php echo esc_html( $team->post_title ); ?>
                         </option>
                     <?php endforeach; ?>
                 </select>
+                <p class="description"><?php esc_html_e( 'اضغط مطولاً على الزر Ctrl (Windows) أو Command (Mac) لاختيار عدة فرق', 'ittihad-lineup' ); ?></p>
             </div>
         </div>
         <?php
@@ -332,7 +313,10 @@ final class ILB_Admin_UI {
 
         update_post_meta( $post_id, '_ilb_position',      sanitize_text_field( $_POST['ilb_position']      ?? '' ) );
         update_post_meta( $post_id, '_ilb_jersey_number', sanitize_text_field( $_POST['ilb_jersey_number'] ?? '' ) );
-        update_post_meta( $post_id, '_ilb_player_team',   absint( $_POST['ilb_player_team'] ?? 0 ) );
+        $teams = isset( $_POST['ilb_player_team'] ) && is_array( $_POST['ilb_player_team'] ) 
+            ? array_map( 'strval', array_map( 'absint', $_POST['ilb_player_team'] ) ) 
+            : [];
+        update_post_meta( $post_id, '_ilb_player_team',   $teams );
     }
 
     public function save_team_meta( int $post_id, WP_Post $post ): void {
@@ -385,8 +369,10 @@ final class ILB_Admin_UI {
                 echo esc_html( get_post_meta( $post_id, '_ilb_jersey_number', true ) ?: '—' );
                 break;
             case 'ilb_team':
-                $team_id = get_post_meta( $post_id, '_ilb_player_team', true );
-                echo $team_id ? esc_html( get_the_title( $team_id ) ) : '—';
+                $team_ids = get_post_meta( $post_id, '_ilb_player_team', true );
+                if ( ! is_array( $team_ids ) ) $team_ids = $team_ids ? (array) $team_ids : [];
+                $titles = array_filter( array_map( 'get_the_title', $team_ids ) );
+                echo $titles ? esc_html( implode( '، ', $titles ) ) : '—';
                 break;
         }
     }
