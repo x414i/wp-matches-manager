@@ -13,7 +13,6 @@ if ( ! defined( 'ABSPATH' ) ) {
  * Register meta boxes.
  */
 function ummm_register_meta_boxes() {
-	// Match details meta box.
 	add_meta_box(
 		'ummm_match_details',
 		__( 'تفاصيل المباراة', 'ummm' ),
@@ -23,7 +22,6 @@ function ummm_register_meta_boxes() {
 		'high'
 	);
 
-	// Match status meta box.
 	add_meta_box(
 		'ummm_match_status',
 		__( 'حالة المباراة', 'ummm' ),
@@ -36,7 +34,8 @@ function ummm_register_meta_boxes() {
 add_action( 'add_meta_boxes', 'ummm_register_meta_boxes' );
 
 /**
- * Render the match details meta box.
+ * Render the match details meta box — restructured into clear sections
+ * with dropdown team selectors.
  *
  * @param WP_Post $post The current post.
  */
@@ -52,6 +51,17 @@ function ummm_render_match_details_meta_box( $post ) {
 	$score_ft       = get_post_meta( $post->ID, '_ummm_score_ft', true );
 	$score_ht       = get_post_meta( $post->ID, '_ummm_score_ht', true );
 	$referee        = get_post_meta( $post->ID, '_ummm_referee', true );
+
+	// Get all teams for dropdown.
+	$all_teams = get_terms( array(
+		'taxonomy'   => 'ummm_team',
+		'hide_empty' => false,
+		'orderby'    => 'name',
+		'order'      => 'ASC',
+	) );
+	if ( is_wp_error( $all_teams ) ) {
+		$all_teams = array();
+	}
 	?>
 	<style>
 		.ummm-meta-grid {
@@ -71,7 +81,8 @@ function ummm_render_match_details_meta_box( $post ) {
 		}
 		.ummm-meta-field input[type="text"],
 		.ummm-meta-field input[type="date"],
-		.ummm-meta-field input[type="time"] {
+		.ummm-meta-field input[type="time"],
+		.ummm-meta-field select {
 			width: 100%;
 			padding: 8px 10px;
 			border: 1px solid #8c8f94;
@@ -79,22 +90,29 @@ function ummm_render_match_details_meta_box( $post ) {
 			font-size: 14px;
 			font-family: inherit;
 			direction: rtl;
+			background: #fff;
 		}
-		.ummm-meta-field input:focus {
+		.ummm-meta-field input:focus,
+		.ummm-meta-field select:focus {
 			outline: none;
 			border-color: #267d34;
 			box-shadow: 0 0 0 2px rgba(38,125,52,0.2);
 		}
 		.ummm-meta-section-title {
 			grid-column: 1 / -1;
-			border-top: 1px solid #dcdcde;
+			display: flex;
+			align-items: center;
+			gap: 8px;
+			border-top: 2px solid #267d34;
 			padding-top: 16px;
 			margin-top: 4px;
 			font-size: 13px;
 			font-weight: 700;
-			color: #646970;
-			text-transform: uppercase;
+			color: #267d34;
 			letter-spacing: 0.5px;
+		}
+		.ummm-meta-section-title .ummm-sec-icon {
+			font-size: 16px;
 		}
 		.ummm-score-row {
 			display: flex;
@@ -112,26 +130,104 @@ function ummm_render_match_details_meta_box( $post ) {
 			width: 70px !important;
 			text-align: center;
 		}
+		/* Team selector with image preview */
+		.ummm-team-select-wrap {
+			display: flex;
+			align-items: center;
+			gap: 10px;
+		}
+		.ummm-team-select-wrap select {
+			flex: 1;
+		}
+		.ummm-team-preview-thumb {
+			width: 40px;
+			height: 40px;
+			border-radius: 50%;
+			object-fit: cover;
+			border: 2px solid #dcdcde;
+			flex-shrink: 0;
+			background: #f0f0f1;
+		}
+		.ummm-team-preview-placeholder {
+			width: 40px;
+			height: 40px;
+			border-radius: 50%;
+			background: #f0f0f1;
+			display: flex;
+			align-items: center;
+			justify-content: center;
+			font-size: 18px;
+			flex-shrink: 0;
+			border: 2px solid #dcdcde;
+		}
 	</style>
+
 	<div class="ummm-meta-grid">
 
-		<p class="ummm-meta-section-title"><?php esc_html_e( 'الفرق', 'ummm' ); ?></p>
+		<!-- ── Section 1: الفريقين (Teams) ── -->
+		<p class="ummm-meta-section-title">
+			<span class="ummm-sec-icon">⚽</span>
+			<?php esc_html_e( 'الفريقين', 'ummm' ); ?>
+		</p>
 
 		<div class="ummm-meta-field">
 			<label for="ummm_home_team"><?php esc_html_e( 'الفريق المستضيف', 'ummm' ); ?></label>
-			<input type="text" id="ummm_home_team" name="ummm_home_team"
-				value="<?php echo esc_attr( $home_team ); ?>"
-				placeholder="<?php esc_attr_e( 'اسم الفريق المستضيف', 'ummm' ); ?>">
+			<div class="ummm-team-select-wrap">
+				<?php
+				// Show current team image preview.
+				$home_img = '';
+				if ( is_numeric( $home_team ) ) {
+					$home_img = ummm_resolve_team_image( $home_team );
+				}
+				if ( $home_img ) :
+					?>
+					<img src="<?php echo esc_url( $home_img ); ?>" alt="" class="ummm-team-preview-thumb" id="ummm-home-preview">
+				<?php else : ?>
+					<span class="ummm-team-preview-placeholder" id="ummm-home-preview">🏠</span>
+				<?php endif; ?>
+				<select id="ummm_home_team" name="ummm_home_team">
+					<option value=""><?php esc_html_e( '— اختر الفريق المستضيف —', 'ummm' ); ?></option>
+					<?php foreach ( $all_teams as $team ) : ?>
+						<option value="<?php echo esc_attr( $team->term_id ); ?>"
+							<?php selected( $home_team, $team->term_id ); ?>>
+							<?php echo esc_html( $team->name ); ?>
+						</option>
+					<?php endforeach; ?>
+				</select>
+			</div>
 		</div>
 
 		<div class="ummm-meta-field">
 			<label for="ummm_away_team"><?php esc_html_e( 'الفريق الضيف', 'ummm' ); ?></label>
-			<input type="text" id="ummm_away_team" name="ummm_away_team"
-				value="<?php echo esc_attr( $away_team ); ?>"
-				placeholder="<?php esc_attr_e( 'اسم الفريق الضيف', 'ummm' ); ?>">
+			<div class="ummm-team-select-wrap">
+				<?php
+				$away_img = '';
+				if ( is_numeric( $away_team ) ) {
+					$away_img = ummm_resolve_team_image( $away_team );
+				}
+				if ( $away_img ) :
+					?>
+					<img src="<?php echo esc_url( $away_img ); ?>" alt="" class="ummm-team-preview-thumb" id="ummm-away-preview">
+				<?php else : ?>
+					<span class="ummm-team-preview-placeholder" id="ummm-away-preview">✈️</span>
+				<?php endif; ?>
+				<select id="ummm_away_team" name="ummm_away_team">
+					<option value=""><?php esc_html_e( '— اختر الفريق الضيف —', 'ummm' ); ?></option>
+					<?php foreach ( $all_teams as $team ) : ?>
+						<option value="<?php echo esc_attr( $team->term_id ); ?>"
+							<?php selected( $away_team, $team->term_id ); ?>>
+							<?php echo esc_html( $team->name ); ?>
+						</option>
+					<?php endforeach; ?>
+				</select>
+			</div>
 		</div>
 
-		<p class="ummm-meta-section-title"><?php esc_html_e( 'الموعد والمكان', 'ummm' ); ?></p>
+		<!-- ── Section 2: تفاصيل المباراة (Match Details) ── -->
+		<p class="ummm-meta-section-title">
+			<span class="ummm-sec-icon">📋</span>
+			<?php esc_html_e( 'تفاصيل المباراة', 'ummm' ); ?>
+		</p>
 
 		<div class="ummm-meta-field">
 			<label for="ummm_match_date"><?php esc_html_e( 'تاريخ المباراة', 'ummm' ); ?></label>
@@ -159,7 +255,18 @@ function ummm_render_match_details_meta_box( $post ) {
 				placeholder="<?php esc_attr_e( 'اسم البطولة أو الدوري', 'ummm' ); ?>">
 		</div>
 
-		<p class="ummm-meta-section-title"><?php esc_html_e( 'النتائج', 'ummm' ); ?></p>
+		<div class="ummm-meta-field ummm-full-width">
+			<label for="ummm_referee"><?php esc_html_e( 'حكم المباراة', 'ummm' ); ?></label>
+			<input type="text" id="ummm_referee" name="ummm_referee"
+				value="<?php echo esc_attr( $referee ); ?>"
+				placeholder="<?php esc_attr_e( 'اسم الحكم (اختياري)', 'ummm' ); ?>">
+		</div>
+
+		<!-- ── Section 3: النتيجة (Score) ── -->
+		<p class="ummm-meta-section-title">
+			<span class="ummm-sec-icon">🏆</span>
+			<?php esc_html_e( 'النتيجة', 'ummm' ); ?>
+		</p>
 
 		<div class="ummm-meta-field">
 			<label><?php esc_html_e( 'النتيجة النهائية', 'ummm' ); ?></label>
@@ -187,15 +294,6 @@ function ummm_render_match_details_meta_box( $post ) {
 			</div>
 		</div>
 
-		<p class="ummm-meta-section-title"><?php esc_html_e( 'معلومات إضافية', 'ummm' ); ?></p>
-
-		<div class="ummm-meta-field ummm-full-width">
-			<label for="ummm_referee"><?php esc_html_e( 'حكم المباراة', 'ummm' ); ?></label>
-			<input type="text" id="ummm_referee" name="ummm_referee"
-				value="<?php echo esc_attr( $referee ); ?>"
-				placeholder="<?php esc_attr_e( 'اسم الحكم (اختياري)', 'ummm' ); ?>">
-		</div>
-
 	</div>
 	<?php
 }
@@ -207,10 +305,10 @@ function ummm_render_match_details_meta_box( $post ) {
  */
 function ummm_render_match_status_meta_box( $post ) {
 	$statuses = array(
-		'upcoming'  => __( 'قادمة', 'ummm' ),
-		'live'      => __( 'مباشرة 🔴', 'ummm' ),
-		'finished'  => __( 'انتهت', 'ummm' ),
-		'postponed' => __( 'مؤجلة', 'ummm' ),
+		'upcoming'  => array( 'label' => __( 'قادمة', 'ummm' ),     'icon' => '📅', 'color' => '#d4a017' ),
+		'live'      => array( 'label' => __( 'مباشرة', 'ummm' ),    'icon' => '🔴', 'color' => '#d63638' ),
+		'finished'  => array( 'label' => __( 'انتهت', 'ummm' ),     'icon' => '✅', 'color' => '#267d34' ),
+		'postponed' => array( 'label' => __( 'مؤجلة', 'ummm' ),     'icon' => '⏸️', 'color' => '#8c8f94' ),
 	);
 	$current = $post->post_status;
 	if ( ! array_key_exists( $current, $statuses ) ) {
@@ -219,27 +317,50 @@ function ummm_render_match_status_meta_box( $post ) {
 	?>
 	<style>
 		.ummm-status-box { direction: rtl; }
-		.ummm-status-box label { display: flex; align-items: center; gap: 8px; padding: 8px 0; cursor: pointer; font-size: 14px; }
-		.ummm-status-box input[type="radio"] { margin: 0; width: 16px; height: 16px; cursor: pointer; accent-color: #267d34; }
+		.ummm-status-box label {
+			display: flex;
+			align-items: center;
+			gap: 8px;
+			padding: 10px 12px;
+			cursor: pointer;
+			font-size: 14px;
+			border-radius: 6px;
+			margin-bottom: 4px;
+			transition: background 0.15s;
+		}
+		.ummm-status-box label:hover {
+			background: #f0f0f1;
+		}
+		.ummm-status-box label.ummm-status-selected {
+			background: #f0fdf4;
+			border: 1px solid #267d34;
+		}
+		.ummm-status-box input[type="radio"] {
+			margin: 0;
+			width: 16px;
+			height: 16px;
+			cursor: pointer;
+			accent-color: #267d34;
+		}
 		.ummm-status-badge {
 			display: inline-block;
-			padding: 2px 10px;
+			padding: 3px 12px;
 			border-radius: 20px;
 			font-size: 12px;
 			font-weight: 600;
 			color: #fff;
 		}
-		.ummm-status-badge.upcoming  { background: #0073aa; }
-		.ummm-status-badge.live      { background: #d63638; }
-		.ummm-status-badge.finished  { background: #267d34; }
-		.ummm-status-badge.postponed { background: #8c8f94; }
 	</style>
 	<div class="ummm-status-box">
-		<?php foreach ( $statuses as $key => $label ) : ?>
-		<label>
+		<?php foreach ( $statuses as $key => $s ) : ?>
+		<label class="<?php echo ( $current === $key ) ? 'ummm-status-selected' : ''; ?>">
 			<input type="radio" name="ummm_match_status" value="<?php echo esc_attr( $key ); ?>"
-				<?php checked( $current, $key ); ?>>
-			<span class="ummm-status-badge <?php echo esc_attr( $key ); ?>"><?php echo esc_html( $label ); ?></span>
+				<?php checked( $current, $key ); ?>
+				onchange="document.querySelectorAll('.ummm-status-box label').forEach(function(l){l.classList.remove('ummm-status-selected')});this.closest('label').classList.add('ummm-status-selected');">
+			<span><?php echo esc_html( $s['icon'] ); ?></span>
+			<span class="ummm-status-badge" style="background:<?php echo esc_attr( $s['color'] ); ?>">
+				<?php echo esc_html( $s['label'] ); ?>
+			</span>
 		</label>
 		<?php endforeach; ?>
 	</div>
@@ -252,7 +373,6 @@ function ummm_render_match_status_meta_box( $post ) {
  * @param int $post_id The post ID being saved.
  */
 function ummm_save_match_meta( $post_id ) {
-	// Security checks.
 	if ( ! isset( $_POST['ummm_match_meta_nonce'] )
 		|| ! wp_verify_nonce( sanitize_key( $_POST['ummm_match_meta_nonce'] ), 'ummm_save_match_meta' )
 	) {
@@ -267,10 +387,20 @@ function ummm_save_match_meta( $post_id ) {
 		return;
 	}
 
-	// Define text fields.
+	// Team fields (now saved as term IDs).
+	$team_fields = array(
+		'ummm_home_team' => '_ummm_home_team',
+		'ummm_away_team' => '_ummm_away_team',
+	);
+	foreach ( $team_fields as $field => $meta_key ) {
+		if ( isset( $_POST[ $field ] ) ) {
+			$val = sanitize_text_field( wp_unslash( $_POST[ $field ] ) );
+			update_post_meta( $post_id, $meta_key, $val );
+		}
+	}
+
+	// Other text fields.
 	$text_fields = array(
-		'ummm_home_team'   => '_ummm_home_team',
-		'ummm_away_team'   => '_ummm_away_team',
 		'ummm_match_date'  => '_ummm_match_date',
 		'ummm_match_time'  => '_ummm_match_time',
 		'ummm_stadium'     => '_ummm_stadium',
@@ -307,7 +437,6 @@ function ummm_save_match_meta( $post_id ) {
 	if ( isset( $_POST['ummm_match_status'] )
 		&& in_array( sanitize_key( $_POST['ummm_match_status'] ), $allowed_statuses, true )
 	) {
-		// Unhook to prevent infinite loop.
 		remove_action( 'save_post_ummm_matches', 'ummm_save_match_meta' );
 		wp_update_post( array(
 			'ID'          => $post_id,
@@ -326,13 +455,13 @@ add_action( 'save_post_ummm_matches', 'ummm_save_match_meta' );
  */
 function ummm_match_columns( $columns ) {
 	$new_columns = array();
-	$new_columns['cb']          = $columns['cb'];
-	$new_columns['title']       = __( 'المباراة', 'ummm' );
-	$new_columns['match_date']  = __( 'التاريخ', 'ummm' );
-	$new_columns['match_teams'] = __( 'الفرق', 'ummm' );
+	$new_columns['cb']           = $columns['cb'];
+	$new_columns['title']        = __( 'المباراة', 'ummm' );
+	$new_columns['match_date']   = __( 'التاريخ', 'ummm' );
+	$new_columns['match_teams']  = __( 'الفرق', 'ummm' );
 	$new_columns['match_status'] = __( 'الحالة', 'ummm' );
-	$new_columns['ummm_team']   = $columns['ummm_team'] ?? __( 'الفئة', 'ummm' );
-	$new_columns['date']        = $columns['date'];
+	$new_columns['ummm_team']    = $columns['ummm_team'] ?? __( 'الفئة', 'ummm' );
+	$new_columns['date']         = $columns['date'];
 	return $new_columns;
 }
 add_filter( 'manage_ummm_matches_posts_columns', 'ummm_match_columns' );
@@ -352,14 +481,16 @@ function ummm_match_column_data( $column, $post_id ) {
 			break;
 
 		case 'match_teams':
-			$home = get_post_meta( $post_id, '_ummm_home_team', true );
-			$away = get_post_meta( $post_id, '_ummm_away_team', true );
+			$home_raw = get_post_meta( $post_id, '_ummm_home_team', true );
+			$away_raw = get_post_meta( $post_id, '_ummm_away_team', true );
+			$home     = ummm_resolve_team_name( $home_raw );
+			$away     = ummm_resolve_team_name( $away_raw );
 			echo esc_html( $home ? $home . ' ضد ' . $away : '—' );
 			break;
 
 		case 'match_status':
 			$status_map = array(
-				'upcoming'  => array( 'label' => 'قادمة', 'color' => '#0073aa' ),
+				'upcoming'  => array( 'label' => 'قادمة', 'color' => '#d4a017' ),
 				'live'      => array( 'label' => 'مباشرة', 'color' => '#d63638' ),
 				'finished'  => array( 'label' => 'انتهت', 'color' => '#267d34' ),
 				'postponed' => array( 'label' => 'مؤجلة', 'color' => '#8c8f94' ),
@@ -393,7 +524,7 @@ add_filter( 'manage_edit-ummm_matches_sortable_columns', 'ummm_sortable_columns'
 /**
  * Add status filter links to the admin list view.
  *
- * @param array  $views  Current view links.
+ * @param array $views Current view links.
  * @return array Modified views.
  */
 function ummm_add_status_views( $views ) {

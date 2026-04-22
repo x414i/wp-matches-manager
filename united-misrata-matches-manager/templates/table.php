@@ -43,9 +43,23 @@ if ( ! $query->have_posts() ) {
 					<tr>
 						<td><?php echo esc_html( $data['match_date'] ?: '—' ); ?></td>
 						<td><?php echo esc_html( $data['match_time'] ?: '—' ); ?></td>
-						<td class="ummm-team-cell"><?php echo esc_html( $data['home_team'] ?: '—' ); ?></td>
+						<td class="ummm-team-cell">
+							<div class="ummm-table-team">
+								<span class="ummm-table-team__logo">
+									<?php echo ummm_team_logo_html( $data['home_team_image'], $data['home_team'] ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?>
+								</span>
+								<span><?php echo esc_html( $data['home_team'] ?: '—' ); ?></span>
+							</div>
+						</td>
 						<td class="ummm-score-cell"><?php echo $score_display; // phpcs:ignore WordPress.Security.EscapeOutput ?></td>
-						<td class="ummm-team-cell"><?php echo esc_html( $data['away_team'] ?: '—' ); ?></td>
+						<td class="ummm-team-cell">
+							<div class="ummm-table-team">
+								<span class="ummm-table-team__logo">
+									<?php echo ummm_team_logo_html( $data['away_team_image'], $data['away_team'] ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?>
+								</span>
+								<span><?php echo esc_html( $data['away_team'] ?: '—' ); ?></span>
+							</div>
+						</td>
 						<td><?php echo esc_html( $data['stadium'] ?: '—' ); ?></td>
 						<td><?php echo esc_html( $data['competition'] ?: '—' ); ?></td>
 						<td>

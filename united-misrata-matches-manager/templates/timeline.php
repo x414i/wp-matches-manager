@@ -57,11 +57,23 @@ ksort( $groups );
 								</div>
 
 								<div class="ummm-timeline__matchup">
-									<span class="ummm-timeline__team"><?php echo esc_html( $data['home_team'] ?: '—' ); ?></span>
+									<div class="ummm-timeline__team-block">
+										<span class="ummm-timeline__team-logo">
+											<?php echo ummm_team_logo_html( $data['home_team_image'], $data['home_team'] ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?>
+										</span>
+										<span class="ummm-timeline__team"><?php echo esc_html( $data['home_team'] ?: '—' ); ?></span>
+									</div>
+
 									<span class="ummm-timeline__score">
 										<?php echo $data['score_ft'] ? esc_html( $data['score_ft'] ) : '<em>vs</em>'; // phpcs:ignore WordPress.Security.EscapeOutput ?>
 									</span>
-									<span class="ummm-timeline__team"><?php echo esc_html( $data['away_team'] ?: '—' ); ?></span>
+
+									<div class="ummm-timeline__team-block ummm-timeline__team-block--away">
+										<span class="ummm-timeline__team-logo">
+											<?php echo ummm_team_logo_html( $data['away_team_image'], $data['away_team'] ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?>
+										</span>
+										<span class="ummm-timeline__team"><?php echo esc_html( $data['away_team'] ?: '—' ); ?></span>
+									</div>
 								</div>
 
 								<?php if ( $data['stadium'] || $data['competition'] ) : ?>

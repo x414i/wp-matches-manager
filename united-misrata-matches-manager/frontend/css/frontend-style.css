@@ -18,6 +18,8 @@
   --ummm-green-light: #2e9e40;
   --ummm-green-dim:   rgba(38, 125, 52, 0.15);
   --ummm-red:         #c0392b;
+  --ummm-yellow:      #d4a017;
+  --ummm-yellow-dim:  rgba(212, 160, 23, 0.15);
   --ummm-blue:        #2563eb;
   --ummm-gray:        #6b7280;
   --ummm-text:        #e5e5e5;
@@ -68,7 +70,18 @@
 }
 
 /* =====================================================================
-   Status Badges
+   Team Image (shared across all views)
+   ===================================================================== */
+.ummm-team-img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  border-radius: 50%;
+  display: block;
+}
+
+/* =====================================================================
+   Status Badges — Updated Colors
    ===================================================================== */
 .ummm-badge {
   display: inline-flex;
@@ -85,7 +98,7 @@
   transition: transform var(--ummm-transition);
 }
 
-.ummm-badge.ummm-status--upcoming  { background: var(--ummm-blue); }
+.ummm-badge.ummm-status--upcoming  { background: var(--ummm-yellow); color: #1a1400; }
 .ummm-badge.ummm-status--live      { background: var(--ummm-red); }
 .ummm-badge.ummm-status--finished  { background: var(--ummm-green); }
 .ummm-badge.ummm-status--postponed { background: var(--ummm-gray); }
@@ -114,7 +127,7 @@
 }
 
 /* =====================================================================
-   TABLE VIEW
+   TABLE VIEW — with zebra rows and team logos
    ===================================================================== */
 .ummm-table-view {}
 
@@ -150,8 +163,13 @@
   transition: background var(--ummm-transition);
 }
 
-.ummm-table tbody tr:hover {
+/* Zebra striping */
+.ummm-table tbody tr:nth-child(even) {
   background: var(--ummm-bg-card-2);
+}
+
+.ummm-table tbody tr:hover {
+  background: rgba(38, 125, 52, 0.08);
 }
 
 .ummm-table tbody tr:last-child {
@@ -183,8 +201,34 @@
   font-weight: 400;
 }
 
+/* Team logo+name layout in table */
+.ummm-table-team {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.ummm-table-team__logo {
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  overflow: hidden;
+  flex-shrink: 0;
+  background: var(--ummm-bg-card-2);
+  border: 1px solid var(--ummm-border-light);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 0.9rem;
+}
+
+.ummm-table-team__logo .ummm-team-img {
+  width: 100%;
+  height: 100%;
+}
+
 /* =====================================================================
-   CARDS VIEW
+   CARDS VIEW — refined with stronger hover and team logos
    ===================================================================== */
 .ummm-cards-grid {
   display: grid;
@@ -203,14 +247,18 @@
 }
 
 .ummm-card:hover {
-  transform: translateY(-4px);
-  box-shadow: var(--ummm-shadow);
-  border-color: var(--ummm-border-light);
+  transform: translateY(-6px);
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.6);
+  border-color: var(--ummm-green);
 }
 
 .ummm-card--live {
   border-color: var(--ummm-red);
   box-shadow: 0 0 0 1px var(--ummm-red), var(--ummm-shadow-sm);
+}
+
+.ummm-card--live:hover {
+  border-color: var(--ummm-red);
 }
 
 .ummm-card__header {
@@ -261,6 +309,13 @@
   justify-content: center;
   font-size: 1.6rem;
   flex-shrink: 0;
+  overflow: hidden;
+  transition: border-color var(--ummm-transition), transform var(--ummm-transition);
+}
+
+.ummm-card:hover .ummm-card__team-logo {
+  border-color: var(--ummm-green);
+  transform: scale(1.05);
 }
 
 .ummm-card__team-name {
@@ -326,11 +381,11 @@
 }
 
 /* =====================================================================
-   TIMELINE VIEW
+   TIMELINE VIEW — enhanced with team logos
    ===================================================================== */
 .ummm-timeline {
   position: relative;
-  padding-right: 24px;
+  padding-right: 28px;
 }
 
 .ummm-timeline::before {
@@ -339,8 +394,9 @@
   right: 7px;
   top: 8px;
   bottom: 8px;
-  width: 2px;
-  background: linear-gradient(to bottom, var(--ummm-green), transparent);
+  width: 3px;
+  background: linear-gradient(to bottom, var(--ummm-green), var(--ummm-green-dim), transparent);
+  border-radius: 2px;
 }
 
 .ummm-timeline__group {
@@ -390,11 +446,12 @@
   border: 1px solid var(--ummm-border);
   border-radius: var(--ummm-radius);
   padding: 16px 18px;
-  transition: border-color var(--ummm-transition);
+  transition: border-color var(--ummm-transition), transform var(--ummm-transition);
 }
 
 .ummm-timeline__item-inner:hover {
-  border-color: var(--ummm-border-light);
+  border-color: var(--ummm-green);
+  transform: translateX(-4px);
 }
 
 .ummm-timeline__meta {
@@ -420,15 +477,41 @@
   margin-bottom: 10px;
 }
 
+/* Team block with logo in timeline */
+.ummm-timeline__team-block {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex: 1;
+  min-width: 0;
+}
+
+.ummm-timeline__team-block--away {
+  flex-direction: row-reverse;
+  text-align: left;
+}
+
+.ummm-timeline__team-logo {
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  overflow: hidden;
+  flex-shrink: 0;
+  background: var(--ummm-bg-card-2);
+  border: 1px solid var(--ummm-border-light);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1rem;
+}
+
 .ummm-timeline__team {
   font-size: 0.95rem;
   font-weight: 700;
   color: #fff;
-  flex: 1;
-}
-
-.ummm-timeline__team:last-child {
-  text-align: left;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 
 .ummm-timeline__score {
@@ -437,6 +520,7 @@
   color: var(--ummm-green-light);
   text-align: center;
   min-width: 60px;
+  flex-shrink: 0;
 }
 
 .ummm-timeline__score em {
@@ -457,7 +541,7 @@
 }
 
 /* =====================================================================
-   TABS VIEW
+   TABS VIEW — enhanced with icons and smooth transitions
    ===================================================================== */
 .ummm-tabs__nav {
   display: flex;
@@ -477,7 +561,7 @@
 .ummm-tabs__btn {
   display: flex;
   align-items: center;
-  gap: 8px;
+  gap: 6px;
   padding: 10px 20px;
   background: transparent;
   border: none;
@@ -488,17 +572,25 @@
   font-weight: 600;
   color: var(--ummm-text-muted);
   white-space: nowrap;
-  transition: color var(--ummm-transition), border-color var(--ummm-transition);
+  transition: color var(--ummm-transition), border-color var(--ummm-transition), background var(--ummm-transition);
   margin-bottom: -2px;
+  border-radius: var(--ummm-radius-sm) var(--ummm-radius-sm) 0 0;
 }
 
 .ummm-tabs__btn:hover {
   color: var(--ummm-text);
+  background: rgba(255, 255, 255, 0.03);
 }
 
 .ummm-tabs__btn--active {
   color: var(--ummm-green-light);
   border-bottom-color: var(--ummm-green);
+  background: var(--ummm-green-dim);
+}
+
+.ummm-tabs__icon {
+  font-size: 1rem;
+  line-height: 1;
 }
 
 .ummm-tabs__count {
@@ -517,17 +609,23 @@
 
 .ummm-tabs__panel {
   display: none;
+  animation: ummm-fade-in 0.3s ease;
 }
 
 .ummm-tabs__panel--active {
   display: block;
 }
 
+@keyframes ummm-fade-in {
+  from { opacity: 0; transform: translateY(8px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
 /* =====================================================================
    Logo Placeholder
    ===================================================================== */
 .ummm-logo-placeholder {
-  font-size: 1.6rem;
+  font-size: 1.4rem;
   line-height: 1;
   display: flex;
   align-items: center;
@@ -568,7 +666,7 @@
   }
 
   .ummm-timeline {
-    padding-right: 18px;
+    padding-right: 22px;
   }
 
   .ummm-timeline__matchup {
@@ -577,14 +675,25 @@
     gap: 6px;
   }
 
-  .ummm-timeline__team:last-child {
+  .ummm-timeline__team-block,
+  .ummm-timeline__team-block--away {
+    flex-direction: column;
     text-align: center;
+  }
+
+  .ummm-timeline__team {
+    white-space: normal;
   }
 
   .ummm-table th,
   .ummm-table td {
     padding: 10px 12px;
     font-size: 0.82rem;
+  }
+
+  .ummm-table-team__logo {
+    width: 24px;
+    height: 24px;
   }
 }
 
@@ -601,5 +710,9 @@
 
   .ummm-card__competition {
     max-width: 100%;
+  }
+
+  .ummm-tabs__icon {
+    display: none;
   }
 }

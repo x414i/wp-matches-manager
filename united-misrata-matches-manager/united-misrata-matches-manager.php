@@ -62,6 +62,7 @@ final class United_Misrata_Matches_Manager {
 	private function load_dependencies() {
 		require_once UMMM_PLUGIN_DIR . 'includes/cpt.php';
 		require_once UMMM_PLUGIN_DIR . 'includes/taxonomies.php';
+		require_once UMMM_PLUGIN_DIR . 'includes/taxonomies-meta.php';
 		require_once UMMM_PLUGIN_DIR . 'includes/meta-boxes.php';
 		require_once UMMM_PLUGIN_DIR . 'includes/query.php';
 		require_once UMMM_PLUGIN_DIR . 'includes/renderer.php';
