@@ -6,7 +6,7 @@
  * Version:           1.0.0
  * Requires at least: 5.8
  * Requires PHP:      7.4
- * Author:            محمد بلعيد
+ * Author:            Mohamed S. Belaiid 
  * Author URI:        https://github.com/x414i
  * License:           GPL v2 or later
  * License URI:       https://www.gnu.org/licenses/gpl-2.0.html
@@ -166,7 +166,19 @@ final class Ittihad_Lineup_Builder {
         ];
 
         if ( $team_id ) {
-            $args['meta_query'] = [ [ 'key' => '_ilb_player_team', 'value' => $team_id ] ];
+            $args['meta_query'] = [ 
+                'relation' => 'OR',
+                [ 
+                    'key'     => '_ilb_player_team', 
+                    'value'   => '"' . $team_id . '"',
+                    'compare' => 'LIKE'
+                ],
+                [ 
+                    'key'     => '_ilb_player_team', 
+                    'value'   => 'i:' . $team_id . ';',
+                    'compare' => 'LIKE'
+                ]
+            ];
         }
 
         $players = get_posts( $args );

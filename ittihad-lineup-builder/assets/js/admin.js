@@ -9,7 +9,7 @@
 
   /* ── State ──────────────────────────────────────────────────────────────── */
   const state = {
-    lineupId:    parseInt(ILB.builder && ILB.builder.lineupId) || 0,
+    lineupId:    parseInt(window.ILB && ILB.builder && ILB.builder.lineupId) || 0,
     teamId:      0,
     sportType:   'football',
     fieldType:   'default',
@@ -20,25 +20,32 @@
   };
 
   /* ── Cache ───────────────────────────────────────────────────────────────── */
-  const $builder         = $('#ilb-builder');
-  const $pitch           = $('#ilb-pitch');
-  const $playersList     = $('#ilb-players-list');
-  const $activePlayers   = $('#ilb-active-players');
-  const $playerCount     = $('#ilb-player-count');
-  const $dropHint        = $('#ilb-drop-hint');
-  const $statusMsg       = $('#ilb-status-msg');
-  const $saveBtn         = $('#ilb-save-btn');
-  const $teamSelect      = $('#ilb-team-select');
-  const $sportSelect     = $('#ilb-sport-select');
-  const $lineupSelect    = $('##ilb-lineup-select');
-  const $lineupNameInput = $('#ilb-lineup-name');
-  const $fieldTypeSelect = $('#ilb-field-type-select');
-  const $fieldUploadWrap = $('#ilb-custom-field-upload');
-  const $fieldImgUrl     = $('#ilb-field-img-url');
-  const $playerSearch    = $('#ilb-player-search');
+  let $builder, $pitch, $playersList, $activePlayers, $playerCount, $dropHint,
+      $statusMsg, $saveBtn, $teamSelect, $sportSelect, $lineupSelect,
+      $lineupNameInput, $fieldTypeSelect, $fieldUploadWrap, $fieldImgUrl, $playerSearch;
+
+  function initDOM() {
+    $builder         = $('#ilb-builder');
+    $pitch           = $('#ilb-pitch');
+    $playersList     = $('#ilb-players-list');
+    $activePlayers   = $('#ilb-active-players');
+    $playerCount     = $('#ilb-player-count');
+    $dropHint        = $('#ilb-drop-hint');
+    $statusMsg       = $('#ilb-status-msg');
+    $saveBtn         = $('#ilb-save-btn');
+    $teamSelect      = $('#ilb-team-select');
+    $sportSelect     = $('#ilb-sport-select');
+    $lineupSelect    = $('#ilb-lineup-select');
+    $lineupNameInput = $('#ilb-lineup-name');
+    $fieldTypeSelect = $('#ilb-field-type-select');
+    $fieldUploadWrap = $('#ilb-custom-field-upload');
+    $fieldImgUrl     = $('#ilb-field-img-url');
+    $playerSearch    = $('#ilb-player-search');
+  }
 
   /* ── Init ────────────────────────────────────────────────────────────────── */
   function init() {
+    initDOM();
     if (!$builder.length) return; // Not on builder page
 
     // Read initial state from DOM
