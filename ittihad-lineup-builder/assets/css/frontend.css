@@ -1,0 +1,309 @@
+/* =============================================================================
+   Ittihad Lineup Builder — Frontend Styles
+   Developer: محمد بلعيد | github: x414i
+   ============================================================================= */
+
+:root {
+  --ilb-fe-green:       #1a6b2e;
+  --ilb-fe-green-mid:   #2d8e45;
+  --ilb-fe-green-light: #3eb05a;
+  --ilb-fe-green-pale:  #e8f5ec;
+  --ilb-fe-gold:        #f0c040;
+  --ilb-fe-white:       #ffffff;
+  --ilb-fe-dark:        #1a1f2e;
+  --ilb-fe-gray:        #6b7280;
+  --ilb-fe-gray-light:  #f3f4f6;
+  --ilb-fe-radius:      12px;
+  --ilb-fe-shadow:      0 4px 20px rgba(0,0,0,.15);
+}
+
+/* ── Wrapper ──────────────────────────────────────────────────────────────── */
+.ilb-lineup-wrap {
+  font-family: 'Segoe UI', Tahoma, Arial, sans-serif;
+  direction: rtl;
+  margin: 20px 0;
+}
+
+.ilb-error {
+  padding: 12px 16px;
+  background: #fdecea;
+  border: 1px solid #f5c6cb;
+  border-radius: var(--ilb-fe-radius);
+  color: #c62828;
+  font-size: 14px;
+  direction: rtl;
+}
+
+/* ── Header ───────────────────────────────────────────────────────────────── */
+.ilb-lineup-header,
+.ilb-lineup-list-header {
+  text-align: center;
+  padding: 14px;
+  background: linear-gradient(135deg, var(--ilb-fe-green) 0%, var(--ilb-fe-green-mid) 100%);
+  border-radius: var(--ilb-fe-radius) var(--ilb-fe-radius) 0 0;
+}
+
+.ilb-lineup-header .ilb-lineup-team,
+.ilb-lineup-list-header h3 {
+  color: var(--ilb-fe-gold);
+  font-size: 15px;
+  font-weight: 700;
+  margin: 0 0 4px;
+}
+
+.ilb-lineup-header .ilb-lineup-name,
+.ilb-lineup-list-header h4 {
+  color: rgba(255,255,255,.85);
+  font-size: 13px;
+  font-weight: 500;
+  margin: 0;
+}
+
+/* ── Field View (Desktop) ─────────────────────────────────────────────────── */
+.ilb-lineup-field-view { display: block; }
+.ilb-lineup-list-view  { display: none; }
+
+.ilb-lineup-pitch {
+  position: relative;
+  width: 100%;
+  max-width: 600px;
+  margin: 0 auto;
+  aspect-ratio: 7 / 10;
+  overflow: hidden;
+  background:
+    repeating-linear-gradient(
+      to right,
+      rgba(255,255,255,.04) 0 1px,
+      transparent 1px 50%
+    ),
+    repeating-linear-gradient(
+      to bottom,
+      rgba(255,255,255,.04) 0 1px,
+      transparent 1px 10%
+    ),
+    linear-gradient(
+      to bottom,
+      #1a5c28 0%, #1e6b30 25%, #1a5c28 50%, #1e6b30 75%, #1a5c28 100%
+    );
+  box-shadow: var(--ilb-fe-shadow);
+  border-radius: 0 0 var(--ilb-fe-radius) var(--ilb-fe-radius);
+}
+
+/* Sport-specific backgrounds */
+.ilb-lineup-pitch.ilb-sport-volleyball:not([style*="background-image"]) {
+  background: linear-gradient(to bottom, #a0522d 0%, #7d3c10 100%);
+}
+.ilb-lineup-pitch.ilb-sport-basketball:not([style*="background-image"]) {
+  background: linear-gradient(to bottom, #c97a3a 0%, #a0522d 100%);
+}
+.ilb-lineup-pitch.ilb-sport-handball:not([style*="background-image"]) {
+  background: linear-gradient(to bottom, #3a6090 0%, #1e3f6c 100%);
+}
+.ilb-lineup-pitch.ilb-sport-futsal:not([style*="background-image"]) {
+  background: linear-gradient(to bottom, #3a7a3a 0%, #1e5020 100%);
+}
+
+.ilb-lineup-pitch__inner {
+  position: absolute;
+  inset: 0;
+}
+
+/* Field lines */
+.ilb-lineup-pitch__inner::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background-image:
+    linear-gradient(to right, transparent calc(50% - .5px), rgba(255,255,255,.2) calc(50% - .5px), rgba(255,255,255,.2) calc(50% + .5px), transparent calc(50% + .5px)),
+    linear-gradient(to right, rgba(255,255,255,.2) 0 2px, transparent 2px calc(100% - 2px), rgba(255,255,255,.2) calc(100% - 2px)),
+    linear-gradient(to bottom, rgba(255,255,255,.2) 0 2px, transparent 2px calc(100% - 2px), rgba(255,255,255,.2) calc(100% - 2px));
+}
+
+/* ── Player on field ──────────────────────────────────────────────────────── */
+.ilb-lineup-player {
+  position: absolute;
+  transform: translate(-50%, -50%);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+  z-index: 5;
+  transition: transform .2s;
+}
+
+.ilb-lineup-player:hover { transform: translate(-50%, -53%) scale(1.08); z-index: 10; }
+
+.ilb-lineup-player__avatar {
+  position: relative;
+  width: 44px;
+  height: 44px;
+  flex-shrink: 0;
+}
+
+.ilb-lineup-player__avatar img {
+  width: 44px;
+  height: 44px;
+  border-radius: 50%;
+  object-fit: cover;
+  border: 3px solid var(--ilb-fe-gold);
+  box-shadow: 0 2px 10px rgba(0,0,0,.5);
+  display: block;
+}
+
+.ilb-lineup-player__avatar-placeholder {
+  width: 44px;
+  height: 44px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, var(--ilb-fe-green-mid) 0%, var(--ilb-fe-green) 100%);
+  border: 3px solid var(--ilb-fe-gold);
+  box-shadow: 0 2px 10px rgba(0,0,0,.5);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: white;
+  font-size: 18px;
+  font-weight: 700;
+}
+
+.ilb-lineup-player__number {
+  position: absolute;
+  bottom: -3px;
+  right: -5px;
+  background: var(--ilb-fe-green);
+  color: white;
+  font-size: 9px;
+  font-weight: 700;
+  border-radius: 8px;
+  padding: 1px 4px;
+  border: 1.5px solid white;
+  line-height: 1.3;
+  box-shadow: 0 1px 3px rgba(0,0,0,.3);
+}
+
+.ilb-lineup-player__info {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 1px;
+}
+
+.ilb-lineup-player__name {
+  background: rgba(0,0,0,.75);
+  color: white;
+  font-size: 10px;
+  font-weight: 700;
+  border-radius: 4px;
+  padding: 2px 6px;
+  white-space: nowrap;
+  max-width: 80px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  text-align: center;
+  backdrop-filter: blur(4px);
+  box-shadow: 0 1px 4px rgba(0,0,0,.4);
+}
+
+.ilb-lineup-player__pos {
+  background: rgba(26, 107, 46, .85);
+  color: rgba(255,255,255,.9);
+  font-size: 9px;
+  border-radius: 3px;
+  padding: 1px 5px;
+  white-space: nowrap;
+  max-width: 70px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+/* ── List View (Mobile) ───────────────────────────────────────────────────── */
+.ilb-lineup-list {
+  border: 1px solid #e5e7eb;
+  border-top: none;
+  border-radius: 0 0 var(--ilb-fe-radius) var(--ilb-fe-radius);
+  overflow: hidden;
+}
+
+.ilb-list-player {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 10px 14px;
+  border-bottom: 1px solid #f0f0f0;
+  background: var(--ilb-fe-white);
+  transition: background .15s;
+}
+.ilb-list-player:last-child { border-bottom: none; }
+.ilb-list-player:hover { background: var(--ilb-fe-green-pale); }
+
+.ilb-list-player__avatar {
+  width: 40px;
+  height: 40px;
+  flex-shrink: 0;
+}
+
+.ilb-list-player__avatar img {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  object-fit: cover;
+  border: 2px solid var(--ilb-fe-green-light);
+  display: block;
+}
+
+.ilb-list-player__placeholder {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  background: var(--ilb-fe-green-mid);
+  color: white;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 16px;
+  font-weight: 700;
+  border: 2px solid var(--ilb-fe-green-light);
+}
+
+.ilb-list-player__info { flex: 1; min-width: 0; }
+.ilb-list-player__name { font-size: 14px; font-weight: 600; color: #1a202c; display: block; }
+.ilb-list-player__pos  { font-size: 12px; color: var(--ilb-fe-gray); }
+.ilb-list-player__num  {
+  font-size: 14px;
+  font-weight: 700;
+  color: var(--ilb-fe-green);
+  background: var(--ilb-fe-green-pale);
+  border: 1px solid var(--ilb-fe-green-light);
+  border-radius: 6px;
+  padding: 2px 8px;
+  flex-shrink: 0;
+}
+
+.ilb-no-players {
+  text-align: center;
+  color: var(--ilb-fe-gray);
+  padding: 20px;
+  font-size: 14px;
+}
+
+/* ── Responsive ──────────────────────────────────────────────────────────── */
+@media (max-width: 600px) {
+  .ilb-lineup-field-view { display: none; }
+  .ilb-lineup-list-view  { display: block; }
+}
+
+@media (min-width: 601px) {
+  .ilb-lineup-field-view { display: block; }
+  .ilb-lineup-list-view  { display: none; }
+}
+
+/* Lazy load fade-in */
+.ilb-lineup-player img,
+.ilb-list-player img {
+  opacity: 0;
+  transition: opacity .3s ease;
+}
+.ilb-lineup-player img.ilb-loaded,
+.ilb-list-player img.ilb-loaded {
+  opacity: 1;
+}
