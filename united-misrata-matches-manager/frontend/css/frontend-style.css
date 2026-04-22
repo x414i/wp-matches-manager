@@ -1,0 +1,605 @@
+/**
+ * United Misrata Matches Manager — Frontend Styles
+ * Theme: Dark + Green (#267d34) | RTL | Arabic-friendly
+ *
+ * @package UMMM
+ */
+
+/* =====================================================================
+   CSS Custom Properties (Design Tokens)
+   ===================================================================== */
+:root {
+  --ummm-bg:          #0d0d0d;
+  --ummm-bg-card:     #161616;
+  --ummm-bg-card-2:   #1e1e1e;
+  --ummm-border:      #2a2a2a;
+  --ummm-border-light:#333;
+  --ummm-green:       #267d34;
+  --ummm-green-light: #2e9e40;
+  --ummm-green-dim:   rgba(38, 125, 52, 0.15);
+  --ummm-red:         #c0392b;
+  --ummm-blue:        #2563eb;
+  --ummm-gray:        #6b7280;
+  --ummm-text:        #e5e5e5;
+  --ummm-text-muted:  #888;
+  --ummm-text-dim:    #555;
+  --ummm-radius:      10px;
+  --ummm-radius-sm:   6px;
+  --ummm-radius-pill: 50px;
+  --ummm-shadow:      0 4px 24px rgba(0, 0, 0, 0.5);
+  --ummm-shadow-sm:   0 2px 8px rgba(0, 0, 0, 0.3);
+  --ummm-font:        'Segoe UI', 'Tahoma', 'Arial', sans-serif;
+  --ummm-transition:  0.22s ease;
+}
+
+/* =====================================================================
+   Base Wrapper
+   ===================================================================== */
+.ummm-wrapper {
+  font-family: var(--ummm-font);
+  color: var(--ummm-text);
+  background: var(--ummm-bg);
+  direction: rtl;
+  text-align: right;
+  box-sizing: border-box;
+  border-radius: var(--ummm-radius);
+  padding: 28px 20px;
+  margin: 0 auto;
+  max-width: 1200px;
+}
+
+.ummm-wrapper *,
+.ummm-wrapper *::before,
+.ummm-wrapper *::after {
+  box-sizing: border-box;
+}
+
+/* =====================================================================
+   No-Matches state
+   ===================================================================== */
+.ummm-no-matches {
+  text-align: center;
+  padding: 60px 20px;
+  color: var(--ummm-text-muted);
+  font-size: 1rem;
+  background: var(--ummm-bg-card);
+  border-radius: var(--ummm-radius);
+  border: 1px dashed var(--ummm-border-light);
+}
+
+/* =====================================================================
+   Status Badges
+   ===================================================================== */
+.ummm-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  padding: 4px 12px;
+  border-radius: var(--ummm-radius-pill);
+  font-size: 0.72rem;
+  font-weight: 700;
+  letter-spacing: 0.3px;
+  text-transform: uppercase;
+  white-space: nowrap;
+  color: #fff;
+  transition: transform var(--ummm-transition);
+}
+
+.ummm-badge.ummm-status--upcoming  { background: var(--ummm-blue); }
+.ummm-badge.ummm-status--live      { background: var(--ummm-red); }
+.ummm-badge.ummm-status--finished  { background: var(--ummm-green); }
+.ummm-badge.ummm-status--postponed { background: var(--ummm-gray); }
+
+/* Live pulse animation */
+.ummm-badge--pulse {
+  animation: ummm-pulse-bg 2s infinite;
+}
+.ummm-live-dot {
+  display: inline-block;
+  width: 7px;
+  height: 7px;
+  background: #fff;
+  border-radius: 50%;
+  animation: ummm-dot-blink 1.2s infinite;
+  flex-shrink: 0;
+}
+
+@keyframes ummm-pulse-bg {
+  0%, 100% { box-shadow: 0 0 0 0 rgba(192, 57, 43, 0.5); }
+  50%       { box-shadow: 0 0 0 8px rgba(192, 57, 43, 0); }
+}
+@keyframes ummm-dot-blink {
+  0%, 100% { opacity: 1; }
+  50%       { opacity: 0.2; }
+}
+
+/* =====================================================================
+   TABLE VIEW
+   ===================================================================== */
+.ummm-table-view {}
+
+.ummm-table-scroll {
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+  border-radius: var(--ummm-radius);
+  border: 1px solid var(--ummm-border);
+}
+
+.ummm-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.88rem;
+  min-width: 600px;
+}
+
+.ummm-table thead tr {
+  background: var(--ummm-green);
+  color: #fff;
+}
+
+.ummm-table th {
+  padding: 14px 16px;
+  font-weight: 700;
+  text-align: right;
+  white-space: nowrap;
+}
+
+.ummm-table tbody tr {
+  background: var(--ummm-bg-card);
+  border-bottom: 1px solid var(--ummm-border);
+  transition: background var(--ummm-transition);
+}
+
+.ummm-table tbody tr:hover {
+  background: var(--ummm-bg-card-2);
+}
+
+.ummm-table tbody tr:last-child {
+  border-bottom: none;
+}
+
+.ummm-table td {
+  padding: 12px 16px;
+  text-align: right;
+  color: var(--ummm-text);
+  vertical-align: middle;
+}
+
+.ummm-table .ummm-team-cell {
+  font-weight: 600;
+  color: #fff;
+}
+
+.ummm-table .ummm-score-cell {
+  text-align: center;
+  font-weight: 800;
+  font-size: 1rem;
+  color: var(--ummm-green-light);
+  min-width: 80px;
+}
+
+.ummm-score-placeholder {
+  color: var(--ummm-text-dim);
+  font-weight: 400;
+}
+
+/* =====================================================================
+   CARDS VIEW
+   ===================================================================== */
+.ummm-cards-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+  gap: 20px;
+}
+
+.ummm-card {
+  background: var(--ummm-bg-card);
+  border: 1px solid var(--ummm-border);
+  border-radius: var(--ummm-radius);
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  transition: transform var(--ummm-transition), box-shadow var(--ummm-transition), border-color var(--ummm-transition);
+}
+
+.ummm-card:hover {
+  transform: translateY(-4px);
+  box-shadow: var(--ummm-shadow);
+  border-color: var(--ummm-border-light);
+}
+
+.ummm-card--live {
+  border-color: var(--ummm-red);
+  box-shadow: 0 0 0 1px var(--ummm-red), var(--ummm-shadow-sm);
+}
+
+.ummm-card__header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 12px 16px;
+  background: rgba(255, 255, 255, 0.03);
+  border-bottom: 1px solid var(--ummm-border);
+}
+
+.ummm-card__competition {
+  font-size: 0.75rem;
+  color: var(--ummm-text-muted);
+  max-width: 50%;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+/* Matchup — the central section */
+.ummm-card__matchup {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 24px 16px;
+  flex: 1;
+  gap: 8px;
+}
+
+.ummm-card__team {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 10px;
+  flex: 1;
+  min-width: 0;
+}
+
+.ummm-card__team-logo {
+  width: 56px;
+  height: 56px;
+  border-radius: 50%;
+  background: var(--ummm-bg-card-2);
+  border: 2px solid var(--ummm-border-light);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.6rem;
+  flex-shrink: 0;
+}
+
+.ummm-card__team-name {
+  font-size: 0.82rem;
+  font-weight: 700;
+  text-align: center;
+  color: #fff;
+  line-height: 1.3;
+  word-break: break-word;
+}
+
+.ummm-card__score-block {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+  flex-shrink: 0;
+  min-width: 80px;
+}
+
+.ummm-card__score {
+  font-size: 1.9rem;
+  font-weight: 900;
+  color: #fff;
+  line-height: 1;
+  letter-spacing: -1px;
+}
+
+.ummm-card__score--vs {
+  font-size: 1.1rem;
+  color: var(--ummm-text-dim);
+  font-weight: 700;
+}
+
+.ummm-card__score-ht {
+  font-size: 0.7rem;
+  color: var(--ummm-text-muted);
+}
+
+/* Footer */
+.ummm-card__footer {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  padding: 12px 16px;
+  border-top: 1px solid var(--ummm-border);
+  background: rgba(255, 255, 255, 0.02);
+}
+
+.ummm-card__meta {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  font-size: 0.75rem;
+  color: var(--ummm-text-muted);
+}
+
+.ummm-card__meta svg {
+  width: 13px;
+  height: 13px;
+  opacity: 0.6;
+  flex-shrink: 0;
+}
+
+/* =====================================================================
+   TIMELINE VIEW
+   ===================================================================== */
+.ummm-timeline {
+  position: relative;
+  padding-right: 24px;
+}
+
+.ummm-timeline::before {
+  content: '';
+  position: absolute;
+  right: 7px;
+  top: 8px;
+  bottom: 8px;
+  width: 2px;
+  background: linear-gradient(to bottom, var(--ummm-green), transparent);
+}
+
+.ummm-timeline__group {
+  position: relative;
+  margin-bottom: 40px;
+}
+
+.ummm-timeline__date-node {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  margin-bottom: 16px;
+}
+
+.ummm-timeline__date-marker {
+  width: 16px;
+  height: 16px;
+  background: var(--ummm-green);
+  border-radius: 50%;
+  flex-shrink: 0;
+  box-shadow: 0 0 0 4px var(--ummm-green-dim);
+  position: absolute;
+  right: 0;
+}
+
+.ummm-timeline__date-label {
+  font-size: 0.9rem;
+  font-weight: 700;
+  color: var(--ummm-green-light);
+  margin: 0;
+  padding: 0;
+  border: none;
+}
+
+.ummm-timeline__matches {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.ummm-timeline__item {
+  padding-right: 16px;
+}
+
+.ummm-timeline__item-inner {
+  background: var(--ummm-bg-card);
+  border: 1px solid var(--ummm-border);
+  border-radius: var(--ummm-radius);
+  padding: 16px 18px;
+  transition: border-color var(--ummm-transition);
+}
+
+.ummm-timeline__item-inner:hover {
+  border-color: var(--ummm-border-light);
+}
+
+.ummm-timeline__meta {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 12px;
+}
+
+.ummm-timeline__time {
+  font-size: 0.8rem;
+  color: var(--ummm-text-muted);
+  background: var(--ummm-bg-card-2);
+  padding: 2px 8px;
+  border-radius: var(--ummm-radius-sm);
+}
+
+.ummm-timeline__matchup {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  margin-bottom: 10px;
+}
+
+.ummm-timeline__team {
+  font-size: 0.95rem;
+  font-weight: 700;
+  color: #fff;
+  flex: 1;
+}
+
+.ummm-timeline__team:last-child {
+  text-align: left;
+}
+
+.ummm-timeline__score {
+  font-size: 1.1rem;
+  font-weight: 900;
+  color: var(--ummm-green-light);
+  text-align: center;
+  min-width: 60px;
+}
+
+.ummm-timeline__score em {
+  font-style: normal;
+  color: var(--ummm-text-dim);
+  font-weight: 600;
+}
+
+.ummm-timeline__details {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+  font-size: 0.73rem;
+  color: var(--ummm-text-muted);
+  border-top: 1px solid var(--ummm-border);
+  padding-top: 8px;
+  margin-top: 4px;
+}
+
+/* =====================================================================
+   TABS VIEW
+   ===================================================================== */
+.ummm-tabs__nav {
+  display: flex;
+  gap: 4px;
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+  scrollbar-width: none;
+  padding-bottom: 2px;
+  margin-bottom: 20px;
+  border-bottom: 2px solid var(--ummm-border);
+}
+
+.ummm-tabs__nav::-webkit-scrollbar {
+  display: none;
+}
+
+.ummm-tabs__btn {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 10px 20px;
+  background: transparent;
+  border: none;
+  border-bottom: 3px solid transparent;
+  cursor: pointer;
+  font-family: var(--ummm-font);
+  font-size: 0.9rem;
+  font-weight: 600;
+  color: var(--ummm-text-muted);
+  white-space: nowrap;
+  transition: color var(--ummm-transition), border-color var(--ummm-transition);
+  margin-bottom: -2px;
+}
+
+.ummm-tabs__btn:hover {
+  color: var(--ummm-text);
+}
+
+.ummm-tabs__btn--active {
+  color: var(--ummm-green-light);
+  border-bottom-color: var(--ummm-green);
+}
+
+.ummm-tabs__count {
+  background: var(--ummm-bg-card-2);
+  color: var(--ummm-text-muted);
+  font-size: 0.7rem;
+  padding: 2px 7px;
+  border-radius: var(--ummm-radius-pill);
+  font-weight: 700;
+}
+
+.ummm-tabs__btn--active .ummm-tabs__count {
+  background: var(--ummm-green-dim);
+  color: var(--ummm-green-light);
+}
+
+.ummm-tabs__panel {
+  display: none;
+}
+
+.ummm-tabs__panel--active {
+  display: block;
+}
+
+/* =====================================================================
+   Logo Placeholder
+   ===================================================================== */
+.ummm-logo-placeholder {
+  font-size: 1.6rem;
+  line-height: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  height: 100%;
+}
+
+/* =====================================================================
+   Responsive Breakpoints
+   ===================================================================== */
+@media (max-width: 768px) {
+  .ummm-wrapper {
+    padding: 16px 12px;
+  }
+
+  .ummm-cards-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .ummm-card__matchup {
+    padding: 16px 12px;
+  }
+
+  .ummm-card__score {
+    font-size: 1.4rem;
+  }
+
+  .ummm-card__team-logo {
+    width: 44px;
+    height: 44px;
+    font-size: 1.2rem;
+  }
+
+  .ummm-tabs__btn {
+    padding: 8px 14px;
+    font-size: 0.82rem;
+  }
+
+  .ummm-timeline {
+    padding-right: 18px;
+  }
+
+  .ummm-timeline__matchup {
+    flex-direction: column;
+    text-align: center;
+    gap: 6px;
+  }
+
+  .ummm-timeline__team:last-child {
+    text-align: center;
+  }
+
+  .ummm-table th,
+  .ummm-table td {
+    padding: 10px 12px;
+    font-size: 0.82rem;
+  }
+}
+
+@media (max-width: 480px) {
+  .ummm-card__team-name {
+    font-size: 0.75rem;
+  }
+
+  .ummm-card__header {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 6px;
+  }
+
+  .ummm-card__competition {
+    max-width: 100%;
+  }
+}
