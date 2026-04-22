@@ -42,7 +42,7 @@ if ( ! $query->have_posts() ) {
 
 					<div class="ummm-card__team ummm-card__team--home">
 						<div class="ummm-card__team-logo">
-							<span class="ummm-logo-placeholder">🏠</span>
+							<?php echo ummm_team_logo_html( $data['home_team_image'], $data['home_team'] ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?>
 						</div>
 						<span class="ummm-card__team-name"><?php echo esc_html( $data['home_team'] ?: __( 'الفريق المستضيف', 'ummm' ) ); ?></span>
 					</div>
@@ -60,7 +60,7 @@ if ( ! $query->have_posts() ) {
 
 					<div class="ummm-card__team ummm-card__team--away">
 						<div class="ummm-card__team-logo">
-							<span class="ummm-logo-placeholder">✈️</span>
+							<?php echo ummm_team_logo_html( $data['away_team_image'], $data['away_team'] ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?>
 						</div>
 						<span class="ummm-card__team-name"><?php echo esc_html( $data['away_team'] ?: __( 'الفريق الضيف', 'ummm' ) ); ?></span>
 					</div>

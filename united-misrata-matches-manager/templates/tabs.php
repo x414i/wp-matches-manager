@@ -1,7 +1,7 @@
 <?php
 /**
  * Template: Tabs View
- * Matches grouped by status: Upcoming / Live / Finished.
+ * Matches grouped by status: Upcoming / Live / Finished / Postponed.
  *
  * @package UMMM
  */
@@ -10,12 +10,12 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
 
-// Collect matches grouped by status.
+// Tab definitions with icons.
 $tabs_data = array(
-	'upcoming'  => array( 'label' => __( 'القادمة', 'ummm' ), 'matches' => array() ),
-	'live'      => array( 'label' => __( 'المباشرة', 'ummm' ), 'matches' => array() ),
-	'finished'  => array( 'label' => __( 'المنتهية', 'ummm' ), 'matches' => array() ),
-	'postponed' => array( 'label' => __( 'المؤجلة', 'ummm' ), 'matches' => array() ),
+	'upcoming'  => array( 'label' => __( 'القادمة', 'ummm' ), 'icon' => '📅', 'matches' => array() ),
+	'live'      => array( 'label' => __( 'المباشرة', 'ummm' ), 'icon' => '🔴', 'matches' => array() ),
+	'finished'  => array( 'label' => __( 'المنتهية', 'ummm' ), 'icon' => '✅', 'matches' => array() ),
+	'postponed' => array( 'label' => __( 'المؤجلة', 'ummm' ), 'icon' => '⏸️', 'matches' => array() ),
 );
 
 while ( $query->have_posts() ) {
@@ -55,6 +55,7 @@ $uid = 'ummm-tabs-' . wp_unique_id();
 				id="<?php echo esc_attr( $uid . '-tab-' . $key ); ?>"
 				data-tab="<?php echo esc_attr( $uid . '-panel-' . $key ); ?>"
 			>
+				<span class="ummm-tabs__icon"><?php echo esc_html( $tab['icon'] ); ?></span>
 				<?php echo esc_html( $tab['label'] ); ?>
 				<?php if ( $count > 0 ) : ?>
 					<span class="ummm-tabs__count"><?php echo esc_html( $count ); ?></span>
@@ -99,7 +100,9 @@ $uid = 'ummm-tabs-' . wp_unique_id();
 
 							<div class="ummm-card__matchup">
 								<div class="ummm-card__team ummm-card__team--home">
-									<div class="ummm-card__team-logo"><span class="ummm-logo-placeholder">🏠</span></div>
+									<div class="ummm-card__team-logo">
+										<?php echo ummm_team_logo_html( $data['home_team_image'], $data['home_team'] ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?>
+									</div>
 									<span class="ummm-card__team-name"><?php echo esc_html( $data['home_team'] ?: __( 'المستضيف', 'ummm' ) ); ?></span>
 								</div>
 								<div class="ummm-card__score-block">
@@ -113,7 +116,9 @@ $uid = 'ummm-tabs-' . wp_unique_id();
 									<?php endif; ?>
 								</div>
 								<div class="ummm-card__team ummm-card__team--away">
-									<div class="ummm-card__team-logo"><span class="ummm-logo-placeholder">✈️</span></div>
+									<div class="ummm-card__team-logo">
+										<?php echo ummm_team_logo_html( $data['away_team_image'], $data['away_team'] ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?>
+									</div>
 									<span class="ummm-card__team-name"><?php echo esc_html( $data['away_team'] ?: __( 'الضيف', 'ummm' ) ); ?></span>
 								</div>
 							</div>
