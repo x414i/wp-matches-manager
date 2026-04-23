@@ -38,6 +38,9 @@ final class ILB_Admin_UI {
             __( 'الاتحاد المصراتي', 'ittihad-lineup' ),
             'edit_posts',
             'ittihad-main',
+            [ $this, 'render_dashboard' ],
+            'dashicons-shield',
+            30
         );
         add_submenu_page(
             'ittihad-main',
