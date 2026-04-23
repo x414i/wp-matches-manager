@@ -50,6 +50,9 @@ final class ILB_Admin_UI {
 
         add_submenu_page(
             'ittihad-main',
+            __( 'منشئ التشكيلة', 'ittihad-lineup' ),
+            __( '⚽ منشئ التشكيلة', 'ittihad-lineup' ),
+            'edit_posts',
             'ilb_builder',
             [ $this, 'render_builder_page' ]
         );
