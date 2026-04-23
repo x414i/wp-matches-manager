@@ -37,23 +37,22 @@ final class ILB_Admin_UI {
             __( 'نادي الاتحاد المصراتي', 'ittihad-lineup' ),
             __( 'الاتحاد المصراتي', 'ittihad-lineup' ),
             'edit_posts',
-            'ilb_main_menu',
+            'ittihad-main',
             [ $this, 'render_dashboard' ],
             'dashicons-shield',
             30
         );
-
         add_submenu_page(
-            'ilb_main_menu',
+            'ittihad-main',
             __( 'لوحة التحكم', 'ittihad-lineup' ),
             __( 'لوحة التحكم', 'ittihad-lineup' ),
             'edit_posts',
-            'ilb_main_menu',
+            'ittihad-main',
             [ $this, 'render_dashboard' ]
         );
 
         add_submenu_page(
-            'ilb_main_menu',
+            'ittihad-main',
             __( 'منشئ التشكيلة', 'ittihad-lineup' ),
             __( '⚽ منشئ التشكيلة', 'ittihad-lineup' ),
             'edit_posts',
@@ -426,7 +425,8 @@ final class ILB_Admin_UI {
         $lineup_count = wp_count_posts( 'ilb_lineup' )->publish ?? 0;
         ?>
         <div class="wrap ilb-wrap" dir="rtl">
-            <div class="ilb-dashboard">
+            <div class="ilb-container">
+                <div class="ilb-dashboard">
                 <div class="ilb-dashboard__header">
                     <div class="ilb-dashboard__logo">🏆</div>
                     <div>
@@ -507,7 +507,8 @@ final class ILB_Admin_UI {
         $all_teams   = get_posts( [ 'post_type' => 'ilb_team',   'posts_per_page' => -1, 'post_status' => 'publish' ] );
         ?>
         <div class="wrap ilb-wrap ilb-builder-wrap" dir="rtl">
-            <div class="ilb-builder" id="ilb-builder"
+            <div class="ilb-container pd-0 h-100">
+                <div class="ilb-builder" id="ilb-builder"
                  data-lineup-id="<?php echo esc_attr( $lineup_id ); ?>"
                  data-sport-type="<?php echo esc_attr( $sport ); ?>"
                  data-field-type="<?php echo esc_attr( $field_type ); ?>"
@@ -697,7 +698,9 @@ final class ILB_Admin_UI {
                         </div>
                     </div>
                 </div>
+                </div>
             </div>
+        </div>
         </div>
         <?php
     }

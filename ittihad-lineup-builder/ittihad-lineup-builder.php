@@ -141,7 +141,7 @@ final class Ittihad_Lineup_Builder {
             ];
         }
 
-        update_post_meta( $lineup_id, '_ilb_positions',  wp_json_encode( $clean_positions ) );
+        update_post_meta( $lineup_id, '_ilb_positions',  wp_json_encode( $clean_positions, JSON_UNESCAPED_UNICODE ) );
         update_post_meta( $lineup_id, '_ilb_team_id',    $team_id );
         update_post_meta( $lineup_id, '_ilb_sport_type', $sport );
 
@@ -149,7 +149,7 @@ final class Ittihad_Lineup_Builder {
             wp_update_post( [ 'ID' => $lineup_id, 'post_title' => $name ] );
         }
 
-        wp_send_json_success( [ 'message' => __( 'تم الحفظ بنجاح ✓', 'ittihad-lineup' ) ] );
+        wp_send_json_success( [ 'message' => __( 'تم الحفظ بنجاح ✓', 'ittihad-lineup' ) ], 200, JSON_UNESCAPED_UNICODE );
     }
 
     // ─── AJAX: Get players by team ────────────────────────────────────────────
@@ -195,7 +195,7 @@ final class Ittihad_Lineup_Builder {
             ];
         }
 
-        wp_send_json_success( $data );
+        wp_send_json_success( $data, 200, JSON_UNESCAPED_UNICODE );
     }
 
     // ─── AJAX: Get lineup data for editing ───────────────────────────────────
@@ -220,7 +220,7 @@ final class Ittihad_Lineup_Builder {
             'sport_type' => $sport ?: 'football',
             'field_img'  => $field_img,
             'field_type' => $field_type ?: 'football',
-        ] );
+        ] , 200, JSON_UNESCAPED_UNICODE );
     }
 
     // ─── Activation / Deactivation ────────────────────────────────────────────
